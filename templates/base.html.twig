@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Hello !{% endblock %}</title>
@@ -8,9 +8,13 @@
         {% endblock %}
 
         {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
+
     <body>
-        {% block body %}{% endblock %}
+        <img src="{{ asset('images/starshop-logo.png') }}" alt="Starshop logo">
+        {% block body %}
+        {% endblock %}
     </body>
 </html>
