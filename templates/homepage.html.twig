@@ -26,6 +26,7 @@
                         href="{{ path('app_starship_read', { id: ship.id }) }}"
                 >{{ ship.name }}</a>
               </h4>
+              <p>Updated at : {{ ship.arrivedAt|ago }}</p>
             </div>
           </div>
           <div class="flex justify-center min-[1174px]:justify-start mt-2 min-[1174px]:mt-0 shrink-0">

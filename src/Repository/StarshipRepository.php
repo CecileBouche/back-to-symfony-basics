@@ -22,7 +22,8 @@ readonly class StarshipRepository
                 'USS LeafyCruiser (NCC-0001)',
                 'Garden',
                 'Jean-Luc Pickles',
-                StarShipStatusEnum::COMPLETED
+                StarShipStatusEnum::COMPLETED,
+                new \DateTimeImmutable('2026-03-01'),
             ),
             new Starship(
                 2,
@@ -30,6 +31,7 @@ readonly class StarshipRepository
                 'Latte',
                 'James T. Quick!',
                 StarShipStatusEnum::IN_PROGRESS,
+                new \DateTimeImmutable('2025-12-25'),
             ),
             new Starship(
                 3,
@@ -37,6 +39,7 @@ readonly class StarshipRepository
                 'Delta Tourist',
                 'Kathryn Journeyway',
                 StarShipStatusEnum::WAITING,
+                new \DateTimeImmutable('2024-06-25'),
             ),
         ];
     }

@@ -6,10 +6,11 @@ class Starship
 {
     public function __construct(
         private int $id,
-        private string $name,
-        private string $class,
-        private string $captain,
-        private StarShipStatusEnum $status,
+        private readonly string $name,
+        private readonly string $class,
+        private readonly string $captain,
+        private readonly StarShipStatusEnum $status,
+        private readonly \DateTimeImmutable $arrivedAt,
     ) {
     }
 
@@ -41,6 +42,11 @@ class Starship
     public function getStatusString(): string
     {
         return $this->status->value;
+    }
+
+    public function getArrivedAt(): \DateTimeImmutable
+    {
+        return $this->arrivedAt;
     }
 
     public function __toString(): string
