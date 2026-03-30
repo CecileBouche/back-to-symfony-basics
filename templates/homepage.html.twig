@@ -9,6 +9,9 @@
       <h1 class="text-4xl font-semibold mb-8">
         Ship Repair Queue
       </h1>
+      <div class="text-slate-400 mb-4">
+        {{ ships.nbResults }} ships (Page {{ ships.currentPage }} of {{ ships.nbPages }})
+      </div>
       <div class="space-y-5">
       {% for ship in ships %}
         <!-- start ship item -->
@@ -23,7 +26,7 @@
               <h4 class="text-[22px] pt-1 font-semibold">
                 <a
                         class="hover:text-slate-200"
-                        href="{{ path('app_starship_read', { id: ship.id }) }}"
+                        href="{{ path('app_starship_read', { slug: ship.slug }) }}"
                 >{{ ship.name }}</a>
               </h4>
               <p>Updated at : {{ ship.arrivedAt|ago }}</p>
@@ -47,6 +50,16 @@
         Looking for your next galactic ride?
         <a href="#" class="underline font-semibold">Browse the {{ ships|length * 10 }} starships for sale!</a>
       </p>
+      {% if ships.haveToPaginate %}
+        <div class="flex justify-around mt-3 underline font-semibold">
+          {% if ships.hasPreviousPage %}
+            <a href="{{ path('app_homepage', {page: ships.getPreviousPage}) }}">&lt; Previous </a>
+          {% endif %}
+          {% if ships.hasNextPage %}
+            <a href="{{ path('app_homepage', {page: ships.getNextPage}) }}"> Next &gt;</a>
+          {% endif %}
+        </div>
+      {% endif %}
     </div>
   </main>
 {% endblock %}

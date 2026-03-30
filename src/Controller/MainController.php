@@ -2,13 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Starship;
 use App\Repository\StarshipRepository;
-use Psr\Cache\InvalidArgumentException;
 use Symfony\Bridge\Twig\Command\DebugCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -23,13 +24,13 @@ class MainController extends AbstractController
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
-     * @throws InvalidArgumentException
      */
     #[Route('/', name: 'app_homepage')]
     public function homepage(
+        Request $request,
         StarshipRepository $repository,
-        HttpClientInterface $client,
-        CacheInterface $issLocationPool,
+        //        HttpClientInterface $client,
+        //        CacheInterface        $issLocationPool,
         //        #[Autowire(param: 'iss_location_cache_ttl')] $issLocationCacheTtl,
         int $issLocationCacheTtl,
         //        #[Autowire(service: 'twig.command.debug')]
@@ -40,8 +41,20 @@ class MainController extends AbstractController
         //        $twigDebugCommand->run($input, $output);
         //        dd($output);
         //        dd($this->getParameter('iss_location_cache_ttl'));
-        $ships = $repository->findAll();
-        $myShip = $ships[array_rand($ships)];
+        //        $ships = $repository->findAll();
+        //        $ships = $entityManager->createQuery('SELECT s FROM App\Entity\Starship s')->getResult();
+        //        $ships = $entityManager->createQueryBuilder()
+        //            ->select('s')
+        //            ->from(Starship::class, 's')
+        //            ->getQuery()
+        //            ->getResult();
+        //
+        $ships = $repository->findIncomplete();
+        $ships->setMaxPerPage(5);
+        $page = $request->query->get('page', 1);
+        $ships->setCurrentPage($page);
+
+        $myShip = $repository->findMyShip();
 
         //        $issData = $issLocationPool->get('iss_location_data', function () use ($client) {
         //            $response = $client->request('GET', 'https://api.wheretheiss.at/v1/satellites/25544');

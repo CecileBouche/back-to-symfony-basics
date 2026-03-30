@@ -2,56 +2,62 @@
 
 namespace App\Repository;
 
-use App\Model\Starship;
-use App\Model\StarShipStatusEnum;
-use Psr\Log\LoggerInterface;
+use App\Entity\Starship;
+use App\Entity\StarShipStatusEnum;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 
-readonly class StarshipRepository
+/**
+ * @extends ServiceEntityRepository<Starship>
+ */
+class StarshipRepository extends ServiceEntityRepository
 {
-    public function __construct(private LoggerInterface $logger)
+    public function __construct(ManagerRegistry $registry)
     {
+        parent::__construct($registry, Starship::class);
     }
 
-    public function findAll(): array
-    {
-        $this->logger->info('Fetching starships');
+    //    /**
+    //     * @return Starship[] Returns an array of Starship objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('s')
+    //            ->andWhere('s.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('s.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-        return [
-            new Starship(
-                1,
-                'USS LeafyCruiser (NCC-0001)',
-                'Garden',
-                'Jean-Luc Pickles',
-                StarShipStatusEnum::COMPLETED,
-                new \DateTimeImmutable('2026-03-01'),
-            ),
-            new Starship(
-                2,
-                'USS Espresso (NCC-1234-C)',
-                'Latte',
-                'James T. Quick!',
-                StarShipStatusEnum::IN_PROGRESS,
-                new \DateTimeImmutable('2025-12-25'),
-            ),
-            new Starship(
-                3,
-                'USS Wanderlust (NCC-2024-W)',
-                'Delta Tourist',
-                'Kathryn Journeyway',
-                StarShipStatusEnum::WAITING,
-                new \DateTimeImmutable('2024-06-25'),
-            ),
-        ];
+    //    public function findOneBySomeField($value): ?Starship
+    //    {
+    //        return $this->createQueryBuilder('s')
+    //            ->andWhere('s.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
+
+    public function findIncomplete(): Pagerfanta
+    {
+        $query = $this->createQueryBuilder('s')
+            ->where('s.status != :status')
+            ->setParameter(':status', StarShipStatusEnum::COMPLETED)
+            ->orderBy('s.arrivedAt', 'DESC')
+            ->getQuery()
+        ;
+
+        return new Pagerfanta(new QueryAdapter($query));
     }
 
-    public function findById(int $id): ?Starship
+    public function findMyShip(): Starship
     {
-        $ships = $this->findAll();
-        foreach ($ships as $ship) {
-            if ($ship->getId() === $id) {
-                return $ship;
-            }
-        }
-        return null;
+        return $this->findAll()[0];
     }
 }
